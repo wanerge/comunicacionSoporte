@@ -8,9 +8,10 @@ public class EstadoPQRS {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_estado_pqrs")
     private Long idEstadoPqrs;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "estado_pqrs", nullable = false, unique = true)
     private String estadoPqrs;
 
     public EstadoPQRS() {

@@ -16,16 +16,27 @@ public class Empleado {
     @Column(nullable = false)
     private String apellidoEmpleado;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String correoEmpleado;
 
     @ManyToOne
     @JoinColumn(name = "id_cargo_empleado", nullable = false)
     private CargoEmpleado cargoEmpleado;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "id_usuario", unique = true)
     private Usuario usuario;
+
+    public Empleado() {
+    }
+
+    public Empleado(String nombreEmpleado, String apellidoEmpleado, String correoEmpleado, CargoEmpleado cargoEmpleado, Usuario usuario) {
+        this.nombreEmpleado = nombreEmpleado;
+        this.apellidoEmpleado = apellidoEmpleado;
+        this.correoEmpleado = correoEmpleado;
+        this.cargoEmpleado = cargoEmpleado;
+        this.usuario = usuario;
+    }
 
     // Getters and Setters
     public Long getIdEmpleado() {

@@ -17,7 +17,7 @@ public class SesionUsuario {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    @Column(name = "token_sesion", nullable = false)
+    @Column(name = "token_sesion", nullable = false, columnDefinition = "TEXT")
     private String tokenSesion;
 
     @Column(name = "fecha_inicio", nullable = false)

@@ -3,15 +3,15 @@ package com.udea.comunicacionSoporte.dto;
 public class RegistroUsuarioDTO {
     private String correo;
     private String clave;
-    private String tipoUsuario; // Ej: "cliente", "gestor", etc.
+    private Long idTipoUsuario;
 
     public RegistroUsuarioDTO() {
     }
 
-    public RegistroUsuarioDTO(String correo, String clave, String tipoUsuario) {
+    public RegistroUsuarioDTO(String correo, String clave, Long idTipoUsuario) {
         this.correo = correo;
         this.clave = clave;
-        this.tipoUsuario = tipoUsuario;
+        this.idTipoUsuario = idTipoUsuario;
     }
 
     public String getCorreo() {
@@ -30,11 +30,11 @@ public class RegistroUsuarioDTO {
         this.clave = clave;
     }
 
-    public String getTipoUsuario() {
-        return tipoUsuario;
+    public Long getIdTipoUsuario() {
+        return idTipoUsuario;
     }
 
-    public void setTipoUsuario(String tipoUsuario) {
-        this.tipoUsuario = tipoUsuario;
+    public void setIdTipoUsuario(Long idTipoUsuario) {
+        this.idTipoUsuario = idTipoUsuario;
     }
 }

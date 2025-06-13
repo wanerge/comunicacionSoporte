@@ -22,8 +22,8 @@ public class Cliente {
     @Column(nullable = true)
     private String telefonoCliente;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "id_usuario", unique = true)
     private Usuario usuario;
 
     public Cliente() {

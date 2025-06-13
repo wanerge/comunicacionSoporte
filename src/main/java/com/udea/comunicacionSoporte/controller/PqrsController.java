@@ -1,5 +1,7 @@
 package com.udea.comunicacionSoporte.controller;
 
+import com.udea.comunicacionSoporte.dto.ActualizarPqrsDTO;
+import com.udea.comunicacionSoporte.dto.CrearPqrsDTO;
 import com.udea.comunicacionSoporte.dto.PqrsDTO;
 import com.udea.comunicacionSoporte.service.PqrsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pqrs")
-@CrossOrigin(origins = "*") // Ajusta si usas frontend separado
+@CrossOrigin(origins = "*")
 public class PqrsController {
 
     @Autowired
@@ -21,24 +23,39 @@ public class PqrsController {
         return ResponseEntity.ok(pqrsService.listarTodas());
     }
 
-    @GetMapping("/usuario/{id}")
-    public ResponseEntity<List<PqrsDTO>> listarPorIdUsuario(@PathVariable Long id) {
-        return ResponseEntity.ok(pqrsService.listarPorIdUsuario(id));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<PqrsDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(pqrsService.obtenerPorId(id));
     }
 
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<PqrsDTO>> listarPorIdCliente(@PathVariable Long id) {
+        return ResponseEntity.ok(pqrsService.listarPorIdCliente(id));
+    }
+
+    @GetMapping("/gestor/{id}")
+    public ResponseEntity<List<PqrsDTO>> listarPorIdGestor(@PathVariable Long id) {
+        return ResponseEntity.ok(pqrsService.listarPorIdGestor(id));
+    }
+
+    @GetMapping("/sinAsignar")
+    public ResponseEntity<List<PqrsDTO>> obtenerPqrsSinGestores() {
+        return ResponseEntity.ok(pqrsService.obtenerPqrsSinGestores());
+    }
+
     @PostMapping
-    public ResponseEntity<PqrsDTO> crear(@RequestBody PqrsDTO dto) {
+    public ResponseEntity<PqrsDTO> crear(@RequestBody CrearPqrsDTO dto) {
         return ResponseEntity.ok(pqrsService.crear(dto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PqrsDTO> actualizar(@PathVariable Long id, @RequestBody PqrsDTO dto) {
-        return ResponseEntity.ok(pqrsService.actualizar(id, dto));
+    @PutMapping("/{idPqrs}")
+    public ResponseEntity<PqrsDTO> actualizar(@PathVariable Long idPqrs, @RequestBody ActualizarPqrsDTO dto) {
+        return ResponseEntity.ok(pqrsService.actualizar(idPqrs, dto));
+    }
+
+    @PutMapping("/{idPqrs}/gestor/{idGestor}")
+    public ResponseEntity<PqrsDTO> actualizarGestor(@PathVariable Long idPqrs, @PathVariable Long idGestor) {
+        return ResponseEntity.ok(pqrsService.actualizarGestor(idPqrs, idGestor));
     }
 
     @DeleteMapping("/{id}")

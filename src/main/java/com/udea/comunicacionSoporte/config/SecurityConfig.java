@@ -32,7 +32,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/usuarios/registro",   // Permitir crear cuenta
-                                "/api/usuarios/login"       // Permitir inicio de sesión (cuando lo implementes)
+                                "/api/usuarios/login",       // Permitir inicio de sesión (cuando lo implementes)
+                                "/v3/api-docs/**",           // Documentación OpenAPI
+                                "/swagger-ui/**",            // Archivos de Swagger UI
+                                "/swagger-ui.html"           // Página principal de Swagger
                         ).permitAll()
                         .anyRequest().authenticated() // El resto requiere login (JWT más adelante)
 

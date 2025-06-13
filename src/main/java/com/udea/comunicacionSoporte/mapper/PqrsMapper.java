@@ -9,7 +9,11 @@ public class PqrsMapper {
         PqrsDTO dto = new PqrsDTO();
         dto.setIdPqrs(pqrs.getIdPqrs());
         dto.setIdTipoPqrs(pqrs.getTipoPqrs().getIdTipoPqrs());
-        dto.setIdEmpleadoGestor(pqrs.getEmpleadoGestor().getIdEmpleado());
+        if (pqrs.getEmpleadoGestor() != null) {
+            dto.setIdEmpleadoGestor(pqrs.getEmpleadoGestor().getIdEmpleado());
+        } else {
+            dto.setIdEmpleadoGestor(null);
+        }
         dto.setIdCliente(pqrs.getCliente().getIdCliente());
         dto.setAsuntoPqrs(pqrs.getAsuntoPqrs());
         dto.setDescripcionPqrs(pqrs.getDescripcionPqrs());
@@ -20,11 +24,9 @@ public class PqrsMapper {
         return dto;
     }
 
-    public static PQRS toEntity(PqrsDTO dto, TipoPQRS tipoPQRS, Empleado gestor, Cliente cliente, EstadoPQRS estado) {
+    public static PQRS toEntity(PqrsDTO dto, TipoPQRS tipoPQRS, Cliente cliente, EstadoPQRS estado) {
         PQRS pqrs = new PQRS();
-        pqrs.setIdPqrs(dto.getIdPqrs());
         pqrs.setTipoPqrs(tipoPQRS);
-        pqrs.setEmpleadoGestor(gestor);
         pqrs.setCliente(cliente);
         pqrs.setAsuntoPqrs(dto.getAsuntoPqrs());
         pqrs.setDescripcionPqrs(dto.getDescripcionPqrs());

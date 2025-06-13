@@ -26,7 +26,9 @@ public class UsuarioService {
     private final SesionUsuarioRepository sesionUsuarioRepository;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepo, TipoUsuarioRepository tipoUsuarioRepo, BCryptPasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, SesionUsuarioRepository sesionUsuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepo, TipoUsuarioRepository tipoUsuarioRepo,
+                          BCryptPasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider,
+                          SesionUsuarioRepository sesionUsuarioRepository) {
         this.usuarioRepo = usuarioRepo;
         this.tipoUsuarioRepo = tipoUsuarioRepo;
         this.passwordEncoder = passwordEncoder;
@@ -39,7 +41,7 @@ public class UsuarioService {
             throw new RuntimeException("Ya existe un usuario con ese correo.");
         }
 
-        TipoUsuario tipo = tipoUsuarioRepo.findByTipoUsuario(dto.getTipoUsuario())
+        TipoUsuario tipo = tipoUsuarioRepo.findById(dto.getIdTipoUsuario())
                 .orElseThrow(() -> new RuntimeException("Tipo de usuario no válido."));
 
         Usuario usuario = new Usuario();

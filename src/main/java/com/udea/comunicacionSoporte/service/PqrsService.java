@@ -1,5 +1,7 @@
 package com.udea.comunicacionSoporte.service;
 
+import com.udea.comunicacionSoporte.dto.ActualizarPqrsDTO;
+import com.udea.comunicacionSoporte.dto.CrearPqrsDTO;
 import com.udea.comunicacionSoporte.dto.PqrsDTO;
 import com.udea.comunicacionSoporte.entity.*;
 import com.udea.comunicacionSoporte.mapper.PqrsMapper;
@@ -9,35 +11,30 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class PqrsService {
 
-    @Autowired
-    private PqrsRepository pqrsRepository;
+    private final PqrsRepository pqrsRepository;
+    private final TipoPQRSRepository tipoPQRSRepository;
+    private final EstadoPQRSRepository estadoPQRSRepository;
+    private final ClienteRepository clienteRepository;
+    private final EmpleadoRepository empleadoRepository;
 
     @Autowired
-    private TipoPQRSRepository tipoPQRSRepository;
-
-    @Autowired
-    private EstadoPQRSRepository estadoPQRSRepository;
-
-    @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
-    private EmpleadoRepository empleadoRepository;
+    public PqrsService(PqrsRepository pqrsRepository, TipoPQRSRepository tipoPQRSRepository,
+                       EstadoPQRSRepository estadoPQRSRepository, ClienteRepository clienteRepository,
+                       EmpleadoRepository empleadoRepository) {
+        this.pqrsRepository = pqrsRepository;
+        this.tipoPQRSRepository = tipoPQRSRepository;
+        this.estadoPQRSRepository = estadoPQRSRepository;
+        this.clienteRepository = clienteRepository;
+        this.empleadoRepository = empleadoRepository;
+    }
 
     public List<PqrsDTO> listarTodas() {
         return pqrsRepository.findAll().stream()
-                .map(PqrsMapper::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<PqrsDTO> listarPorIdUsuario(Long id) {
-        return pqrsRepository.findByClienteIdCliente(id).stream()
                 .map(PqrsMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -48,44 +45,67 @@ public class PqrsService {
                 .orElseThrow(() -> new RuntimeException("PQRS no encontrada con ID: " + id));
     }
 
-    public PqrsDTO crear(PqrsDTO dto) {
+    public List<PqrsDTO> listarPorIdCliente(Long id) {
+        return pqrsRepository.findByClienteIdCliente(id).stream()
+                .map(PqrsMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PqrsDTO> listarPorIdGestor(Long id){
+        return pqrsRepository.findByEmpleadoGestorIdEmpleado(id).stream()
+                .map(PqrsMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<PqrsDTO> obtenerPqrsSinGestores(){
+        return pqrsRepository.findByEmpleadoGestorIsNull().stream()
+                .map(PqrsMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public PqrsDTO crear(CrearPqrsDTO dto) {
         TipoPQRS tipo = tipoPQRSRepository.findById(dto.getIdTipoPqrs())
                 .orElseThrow(() -> new RuntimeException("Tipo PQRS no encontrado"));
         Cliente cliente = clienteRepository.findById(dto.getIdCliente())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        Empleado gestor = empleadoRepository.findById(dto.getIdEmpleadoGestor())
-                .orElseThrow(() -> new RuntimeException("Gestor no encontrado"));
-        EstadoPQRS estado = estadoPQRSRepository.findById(dto.getIdEstadoPqrs())
+        EstadoPQRS estado = estadoPQRSRepository.findByEstadoPqrs("Pendiente")
                 .orElseThrow(() -> new RuntimeException("Estado PQRS no encontrado"));
 
-        LocalDateTime fechaRadicacion = LocalDateTime.now();
-        dto.setFechaRadicacion(fechaRadicacion);
-        PQRS pqrs = PqrsMapper.toEntity(dto, tipo, gestor, cliente, estado);
+        PQRS pqrs = new PQRS();
+        pqrs.setTipoPqrs(tipo);
+        pqrs.setCliente(cliente);
+        pqrs.setAsuntoPqrs(dto.getAsuntoPqrs());
+        pqrs.setDescripcionPqrs(dto.getDescripcionPqrs());
+        pqrs.setEstadoPqrs(estado);
+        pqrs.setFechaRadicacion(LocalDateTime.now());
         PQRS guardado = pqrsRepository.save(pqrs);
         return PqrsMapper.toDTO(guardado);
     }
 
-    public PqrsDTO actualizar(Long id, PqrsDTO dto) {
-        PQRS existente = pqrsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PQRS no encontrada con ID: " + id));
+    public PqrsDTO actualizar(Long idPqrs, ActualizarPqrsDTO dto) {
+        PQRS existente = pqrsRepository.findById(idPqrs)
+                .orElseThrow(() -> new RuntimeException("PQRS no encontrada con ID: " + idPqrs));
 
         TipoPQRS tipo = tipoPQRSRepository.findById(dto.getIdTipoPqrs())
                 .orElseThrow(() -> new RuntimeException("Tipo PQRS no encontrado"));
-        Cliente cliente = clienteRepository.findById(dto.getIdCliente())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        Empleado gestor = empleadoRepository.findById(dto.getIdEmpleadoGestor())
-                .orElseThrow(() -> new RuntimeException("Gestor no encontrado"));
-        EstadoPQRS estado = estadoPQRSRepository.findById(dto.getIdEstadoPqrs())
-                .orElseThrow(() -> new RuntimeException("Estado PQRS no encontrado"));
 
         existente.setTipoPqrs(tipo);
-        existente.setCliente(cliente);
-        existente.setEmpleadoGestor(gestor);
-        existente.setEstadoPqrs(estado);
         existente.setAsuntoPqrs(dto.getAsuntoPqrs());
         existente.setDescripcionPqrs(dto.getDescripcionPqrs());
-        existente.setFechaModificacion(dto.getFechaModificacion());
-        existente.setFechaExpiracion(dto.getFechaExpiracion());
+        existente.setFechaModificacion(LocalDateTime.now());
+
+        PQRS actualizado = pqrsRepository.save(existente);
+        return PqrsMapper.toDTO(actualizado);
+    }
+
+    public PqrsDTO actualizarGestor(Long idPqrs, Long idGestor) {
+        PQRS existente = pqrsRepository.findById(idPqrs)
+                .orElseThrow(() -> new RuntimeException("PQRS no encontrada con ID: " + idPqrs));
+
+        Empleado gestor = empleadoRepository.findById(idGestor)
+                .orElseThrow(() -> new RuntimeException("Gestor no encontrado"));
+
+        existente.setEmpleadoGestor(gestor);
 
         PQRS actualizado = pqrsRepository.save(existente);
         return PqrsMapper.toDTO(actualizado);

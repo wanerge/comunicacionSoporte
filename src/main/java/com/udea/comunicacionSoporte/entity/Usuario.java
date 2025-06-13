@@ -16,7 +16,7 @@ public class Usuario {
     @Column(name = "correo_usuario", unique = true, nullable = false)
     private String correoUsuario;
 
-    @Column(name = "clave_hash", nullable = false)
+    @Column(name = "clave_hash", nullable = false, columnDefinition = "TEXT")
     private String claveHash;
 
     @Column(name = "fecha_registro", nullable = false)

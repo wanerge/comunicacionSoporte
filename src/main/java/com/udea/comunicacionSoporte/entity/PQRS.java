@@ -9,6 +9,7 @@ public class PQRS {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_pqrs")
     private Long idPqrs;
 
     @ManyToOne
@@ -16,7 +17,7 @@ public class PQRS {
     private TipoPQRS tipoPqrs;
 
     @ManyToOne
-    @JoinColumn(name = "id_empleado_gestor", nullable = false)
+    @JoinColumn(name = "id_empleado_gestor")
     private Empleado empleadoGestor;
 
     @ManyToOne
@@ -26,7 +27,7 @@ public class PQRS {
     @Column(name = "asunto_pqrs", nullable = false)
     private String asuntoPqrs;
 
-    @Column(name = "descripcion_pqrs", nullable = false)
+    @Column(name = "descripcion_pqrs", nullable = false, columnDefinition = "TEXT")
     private String descripcionPqrs;
 
     @ManyToOne
