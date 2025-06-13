@@ -1,15 +1,8 @@
 #Usar la imagen base de OpenJDK
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre
 
 # Setea el directorio de trabajo en el contenedor
 WORKDIR /app
-
-# Copia archivos pom.xml y fuentes para instalar dependencias
-COPY pom.xml .
-COPY src ./src
-
-# Construye el proyecto, sin tests para acelerar
-RUN .\mvnw clean package -DskipTests
 
 # Copia el JAR generado del build stage
 COPY target/comunicacionSoporte-0.0.1-SNAPSHOT.jar app.jar
