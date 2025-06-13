@@ -1,5 +1,5 @@
-# Usa una imagen oficial de Maven para build
-FROM maven:3.10.1-eclipse-temurin-17 AS build
+#Usar la imagen base de OpenJDK
+FROM openjdk:17-jre-slim
 
 # Setea el directorio de trabajo en el contenedor
 WORKDIR /app
