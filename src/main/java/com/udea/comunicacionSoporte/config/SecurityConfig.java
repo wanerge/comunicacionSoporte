@@ -35,7 +35,8 @@ public class SecurityConfig {
                                 "/api/usuarios/login",       // Permitir inicio de sesión (cuando lo implementes)
                                 "/v3/api-docs/**",           // Documentación OpenAPI
                                 "/swagger-ui/**",            // Archivos de Swagger UI
-                                "/swagger-ui.html"           // Página principal de Swagger
+                                "/swagger-ui.html",           // Página principal de Swagger
+                                "/explorer/**"
                         ).permitAll()
                         .anyRequest().authenticated() // El resto requiere login (JWT más adelante)
 
