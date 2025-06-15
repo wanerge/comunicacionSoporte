@@ -73,7 +73,8 @@ public class UsuarioService {
         sesion.setActivo(true);
 
         sesionUsuarioRepository.save(sesion);
+        String rol = usuario.getTipoUsuario().getTipoUsuario();
 
-        return new LoginResponseDTO(token, "Inicio de sesión exitoso");
+        return new LoginResponseDTO(token, "Inicio de sesión exitoso", rol);
     }
 }
