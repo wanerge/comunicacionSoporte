@@ -1,8 +1,6 @@
 package com.udea.comunicacionSoporte.service;
 
-import com.udea.comunicacionSoporte.dto.ActualizarPqrsDTO;
-import com.udea.comunicacionSoporte.dto.CrearPqrsDTO;
-import com.udea.comunicacionSoporte.dto.PqrsDTO;
+import com.udea.comunicacionSoporte.dto.*;
 import com.udea.comunicacionSoporte.entity.*;
 import com.udea.comunicacionSoporte.mapper.PqrsMapper;
 import com.udea.comunicacionSoporte.repository.*;
@@ -39,15 +37,15 @@ public class PqrsService {
                 .collect(Collectors.toList());
     }
 
-    public PqrsDTO obtenerPorId(Long id) {
+    public DetallePqrsDTO obtenerPorId(Long id) {
         return pqrsRepository.findById(id)
-                .map(PqrsMapper::toDTO)
+                .map(PqrsMapper::toDTODetalle)
                 .orElseThrow(() -> new RuntimeException("PQRS no encontrada con ID: " + id));
     }
 
-    public List<PqrsDTO> listarPorIdCliente(Long id) {
+    public List<ResumenPqrsDTO> listarPorIdCliente(Long id) {
         return pqrsRepository.findByClienteIdCliente(id).stream()
-                .map(PqrsMapper::toDTO)
+                .map(PqrsMapper::toDTOResumen)
                 .collect(Collectors.toList());
     }
 
@@ -68,7 +66,7 @@ public class PqrsService {
                 .orElseThrow(() -> new RuntimeException("Tipo PQRS no encontrado"));
         Cliente cliente = clienteRepository.findById(dto.getIdCliente())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        EstadoPQRS estado = estadoPQRSRepository.findByEstadoPqrs("Pendiente")
+        EstadoPQRS estado = estadoPQRSRepository.findByEstadoPqrs("Radicado")
                 .orElseThrow(() -> new RuntimeException("Estado PQRS no encontrado"));
 
         PQRS pqrs = new PQRS();
@@ -82,7 +80,7 @@ public class PqrsService {
         return PqrsMapper.toDTO(guardado);
     }
 
-    public PqrsDTO actualizar(Long idPqrs, ActualizarPqrsDTO dto) {
+    public DetallePqrsDTO actualizar(Long idPqrs, ActualizarPqrsDTO dto) {
         PQRS existente = pqrsRepository.findById(idPqrs)
                 .orElseThrow(() -> new RuntimeException("PQRS no encontrada con ID: " + idPqrs));
 
@@ -95,7 +93,8 @@ public class PqrsService {
         existente.setFechaModificacion(LocalDateTime.now());
 
         PQRS actualizado = pqrsRepository.save(existente);
-        return PqrsMapper.toDTO(actualizado);
+
+        return PqrsMapper.toDTODetalle(actualizado);
     }
 
     public PqrsDTO actualizarGestor(Long idPqrs, Long idGestor) {

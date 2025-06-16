@@ -3,12 +3,8 @@ package com.udea.comunicacionSoporte.service;
 import com.udea.comunicacionSoporte.dto.LoginRequestDTO;
 import com.udea.comunicacionSoporte.dto.LoginResponseDTO;
 import com.udea.comunicacionSoporte.dto.RegistroUsuarioDTO;
-import com.udea.comunicacionSoporte.entity.SesionUsuario;
-import com.udea.comunicacionSoporte.entity.TipoUsuario;
-import com.udea.comunicacionSoporte.entity.Usuario;
-import com.udea.comunicacionSoporte.repository.SesionUsuarioRepository;
-import com.udea.comunicacionSoporte.repository.TipoUsuarioRepository;
-import com.udea.comunicacionSoporte.repository.UsuarioRepository;
+import com.udea.comunicacionSoporte.entity.*;
+import com.udea.comunicacionSoporte.repository.*;
 import com.udea.comunicacionSoporte.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,16 +20,22 @@ public class UsuarioService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final SesionUsuarioRepository sesionUsuarioRepository;
+    private final ClienteRepository clienteRepository;
+    private final EmpleadoRepository empleadoRepository;
+
 
     @Autowired
     public UsuarioService(UsuarioRepository usuarioRepo, TipoUsuarioRepository tipoUsuarioRepo,
                           BCryptPasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider,
-                          SesionUsuarioRepository sesionUsuarioRepository) {
+                          SesionUsuarioRepository sesionUsuarioRepository,ClienteRepository clienteRepository,
+                          EmpleadoRepository empleadoRepository) {
         this.usuarioRepo = usuarioRepo;
         this.tipoUsuarioRepo = tipoUsuarioRepo;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.sesionUsuarioRepository = sesionUsuarioRepository;
+        this.clienteRepository = clienteRepository;
+        this.empleadoRepository = empleadoRepository;
     }
 
     public Usuario registrarUsuario(RegistroUsuarioDTO dto) {
@@ -73,8 +75,27 @@ public class UsuarioService {
         sesion.setActivo(true);
 
         sesionUsuarioRepository.save(sesion);
-        String rol = usuario.getTipoUsuario().getTipoUsuario();
 
-        return new LoginResponseDTO(token, "Inicio de sesión exitoso", rol);
+        LoginResponseDTO dto = new LoginResponseDTO();
+        dto.setToken(token);
+        dto.setRole(usuario.getTipoUsuario().getTipoUsuario());
+        dto.setMensaje("Inicio de sesión exitoso");
+
+        // Buscar el ID real según el tipo de usuario
+        String rol = usuario.getTipoUsuario().getTipoUsuario(); // "Cliente", "Administrador", etc.
+
+        if ("Cliente".equalsIgnoreCase(rol)) {
+            Cliente cliente = clienteRepository.findByUsuario_IdUsuario(usuario.getIdUsuario())
+                    .orElseThrow(() -> new RuntimeException("Cliente no asociado al usuario"));
+            dto.setId(cliente.getIdCliente());
+        } else if ("Administrador".equalsIgnoreCase(rol)) {
+            Empleado empleado = empleadoRepository.findByUsuario_IdUsuario(usuario.getIdUsuario())
+                    .orElseThrow(() -> new RuntimeException("Empleado no asociado al usuario"));
+            dto.setId(empleado.getIdEmpleado());
+        } else {
+            dto.setId(usuario.getIdUsuario()); // fallback en caso de tipo desconocido
+        }
+
+        return dto;
     }
 }

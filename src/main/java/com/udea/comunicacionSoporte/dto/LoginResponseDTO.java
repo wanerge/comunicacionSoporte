@@ -3,15 +3,17 @@ package com.udea.comunicacionSoporte.dto;
 public class LoginResponseDTO {
     private String token;
     private String mensaje;
-    private String rol;
+    private String role;
+    private Long id;
 
     public LoginResponseDTO() {
     }
 
-    public LoginResponseDTO(String token, String mensaje, String rol) {
+    public LoginResponseDTO(String token, String mensaje, String role, Long id) {
         this.token = token;
         this.mensaje = mensaje;
-        this.rol = rol;
+        this.role = role;
+        this.id = id;
     }
 
     public String getToken() {
@@ -30,11 +32,19 @@ public class LoginResponseDTO {
         this.mensaje = mensaje;
     }
 
-    public String getRol() {
-        return rol;
+    public String getRole() {
+        return role;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

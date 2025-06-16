@@ -10,32 +10,36 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    // Usamos una clave secreta codificada en Base64
-    private final String SECRET_KEY = "Wz6lRtH1BQ9Sm3W8v5ZLjxwUkmKHzUsVQm6T2fRwI8s=";  // Base64
+    private final String SECRET_KEY = "Wz6lRtH1BQ9Sm3W8v5ZLjxwUkmKHzUsVQm6T2fRwI8s=";
 
     public String generarToken(Usuario usuario) {
         return Jwts.builder()
                 .setSubject(usuario.getCorreoUsuario())
+                .claim("id", usuario.getIdUsuario())
+                .claim("role", usuario.getTipoUsuario().getTipoUsuario())  // Ej: "Cliente", "Administrador"
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hora
-                .signWith(SignatureAlgorithm.HS256, Base64.getDecoder().decode(SECRET_KEY)) // Decodificamos la clave
+                .signWith(SignatureAlgorithm.HS256, Base64.getDecoder().decode(SECRET_KEY))
                 .compact();
     }
 
-    public String obtenerCorreoDesdeToken(String token) {
-        JwtParser parser = Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(SECRET_KEY)).build();
-        return parser.parseClaimsJws(token).getBody().getSubject();
+    public Claims obtenerClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(Base64.getDecoder().decode(SECRET_KEY))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public boolean esValido(String token) {
         try {
-            JwtParser parser = Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(SECRET_KEY)).build();
-            parser.parseClaimsJws(token);
+            obtenerClaims(token); // Si no lanza excepción, es válido
             return true;
         } catch (JwtException e) {
             return false;
         }
     }
 }
+
 
 

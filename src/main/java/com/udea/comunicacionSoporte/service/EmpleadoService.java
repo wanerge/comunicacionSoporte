@@ -23,7 +23,7 @@ public class EmpleadoService {
     private CargoEmpleadoRepository cargoRepository;
 
     public List<EmpleadoDTO> listarGestores() {
-        return empleadoRepository.findByCargoEmpleado_CargoEmpleado( "Gestor")
+        return empleadoRepository.findAll()
                 .stream()
                 .map(EmpleadoMapper::toDTO)
                 .collect(Collectors.toList());

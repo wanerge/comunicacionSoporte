@@ -1,6 +1,8 @@
 package com.udea.comunicacionSoporte.mapper;
 
+import com.udea.comunicacionSoporte.dto.DetallePqrsDTO;
 import com.udea.comunicacionSoporte.dto.PqrsDTO;
+import com.udea.comunicacionSoporte.dto.ResumenPqrsDTO;
 import com.udea.comunicacionSoporte.entity.*;
 
 public class PqrsMapper {
@@ -21,6 +23,27 @@ public class PqrsMapper {
         dto.setFechaRadicacion(pqrs.getFechaRadicacion());
         dto.setFechaModificacion(pqrs.getFechaModificacion());
         dto.setFechaExpiracion(pqrs.getFechaExpiracion());
+        return dto;
+    }
+
+    public static ResumenPqrsDTO toDTOResumen(PQRS pqrs) {
+        ResumenPqrsDTO dto = new ResumenPqrsDTO();
+        dto.setIdPqrs(pqrs.getIdPqrs());
+        dto.setTipoPqrs(pqrs.getTipoPqrs().getTipoPqrs());
+        dto.setAsuntoPqrs(pqrs.getAsuntoPqrs());
+        dto.setEstadoPqrs(pqrs.getEstadoPqrs().getEstadoPqrs());
+        dto.setFechaRadicacion(pqrs.getFechaRadicacion());
+        return dto;
+    }
+
+    public static DetallePqrsDTO toDTODetalle (PQRS pqrs) {
+        DetallePqrsDTO dto = new DetallePqrsDTO();
+        dto.setIdPqrs(pqrs.getIdPqrs());
+        dto.setTipoPqrs(pqrs.getTipoPqrs().getTipoPqrs());
+        dto.setAsuntoPqrs(pqrs.getAsuntoPqrs());
+        dto.setDescripcionPqrs(pqrs.getDescripcionPqrs());
+        dto.setEstadoPqrs(pqrs.getEstadoPqrs().getEstadoPqrs());
+        dto.setFechaRadicacion(pqrs.getFechaRadicacion());
         return dto;
     }
 
